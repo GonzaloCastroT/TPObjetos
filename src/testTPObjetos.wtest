@@ -1,9 +1,98 @@
-
+import TPObjetos.*
 describe "group of tests" {
-
-	test "testX" {
-
-		assert.that(true)
-
+	
+	const unaPista = new Scalextric()
+	const unYoyo = new Yoyo()
+	const unBalero = new Balero()
+	const listaRegalos = [unaPista, unYoyo, unBalero]
+	/* TEST PUNTO 1 */
+	/* TEST PISTA */
+	test "pista sin autos extra" {
+		assert.equals(unaPista.precio(), 27300)
+	}
+	test "pista con 3 autos extra"{
+		unaPista.cantAutosExtra(3)
+		assert.equals(unaPista.precio(), 43050)
+	}
+	test "pista sin autos extra no es valioso"{
+		assert.that(!unaPista.esValioso())
+	}
+	test "pista con 1 auto extra es valioso"{
+		unaPista.cantAutosExtra(1)
+		assert.that(unaPista.esValioso())
+	}
+	/* TEST YOYO */
+	test "yoyo color amarillo"{
+		unYoyo.color("amarillo")
+		assert.equals(unYoyo.precio(),5000)
+	}
+	test "yoyo color azul"{
+		assert.equals(unYoyo.precio(),6500)
+	}
+	test "yoyo rojo no es valioso"{
+		unYoyo.color("rojo")
+		assert.that(!unYoyo.esValioso())
+	}
+	test "yoyo azul es valioso"{
+		assert.that(unYoyo.esValioso())
+	}
+	/* TEST BALERO */
+	test "balero sin adorno metalico"{
+		assert.equals(unBalero.precio(), 14100)
+	}
+	test "balero con adorno metalico"{
+		unBalero.tieneAdorno(true)
+		assert.equals(unBalero.precio(), 16000)
+	}
+	test "balero sin adorno no es valioso"{
+		assert.that(!unBalero.esValioso())
+	}
+	test "balero con adonro es valioso"{
+		unBalero.tieneAdorno(true)
+		assert.that(unBalero.esValioso())
+	}
+	/* TEST PUNTO 2 */
+	/* TEST STEFAN */
+	test "stefan no elige un yoyo amarillo"{
+		unYoyo.color("amarillo")
+		assert.that(!stefan.aceptaRegalo(unYoyo))
+	}
+	test "stefan no elige un yoyo rojo"{
+		unYoyo.color("rojo")
+		assert.that(!stefan.aceptaRegalo(unYoyo))
+	}
+	test "stefan elige un yoyo verde"{
+		unYoyo.color("verde")
+		assert.that(stefan.aceptaRegalo(unYoyo))
+	}
+	/* TEST JUSTINA */
+	test "justina edad impar elige scalextric con auto extra"{
+		unaPista.cantAutosExtra(1)
+		assert.that(justina.aceptaRegalo(unaPista))
+	}
+	test "justina edad impar no elige scalextric sin autos extra"{
+		assert.that(!justina.aceptaRegalo(unaPista))
+	}
+	test "justina edad par no elige scalextric"{
+		justina.edad(12)
+		assert.that(!justina.aceptaRegalo(unaPista))
+	}
+	test "justina edad par elige cualquier yoyo"{
+		justina.edad(12)
+		assert.that(justina.aceptaRegalo(unYoyo))
+	}
+	/* TEST PEDRO */
+	test "pedro con mejor amiga justina le gusta scalextric con auto extra"{
+		unaPista.cantAutosExtra(1)
+		assert.that(pedro.aceptaRegalo(unaPista))
+	}
+	test "pedro con mejor amigo stefan le gusta yoyo verde"{
+		pedro.mejorAmigo(stefan)
+		unYoyo.color("verde")
+		assert.that(pedro.aceptaRegalo(unYoyo))
+	}
+	/* TEST PUNTO 3 */
+	test "stefan es inconformista"{
+		assert.equals(giftDealer.inconformistas(listaRegalos), [stefan])
 	}
 }
