@@ -15,7 +15,7 @@ describe "group of tests" {
 		assert.equals(unaPista.precio(), 43050)
 	}
 	test "pista sin autos extra no es valioso"{
-		assert.that(!unaPista.esValioso())
+		assert.notThat(unaPista.esValioso())
 	}
 	test "pista con 1 auto extra es valioso"{
 		unaPista.cantAutosExtra(1)
@@ -31,7 +31,7 @@ describe "group of tests" {
 	}
 	test "yoyo rojo no es valioso"{
 		unYoyo.color("rojo")
-		assert.that(!unYoyo.esValioso())
+		assert.notThat(unYoyo.esValioso())
 	}
 	test "yoyo azul es valioso"{
 		assert.that(unYoyo.esValioso())
@@ -45,7 +45,7 @@ describe "group of tests" {
 		assert.equals(unBalero.precio(), 16000)
 	}
 	test "balero sin adorno no es valioso"{
-		assert.that(!unBalero.esValioso())
+		assert.notThat(unBalero.esValioso())
 	}
 	test "balero con adonro es valioso"{
 		unBalero.tieneAdorno(true)
@@ -55,11 +55,11 @@ describe "group of tests" {
 	/* TEST STEFAN */
 	test "stefan no elige un yoyo amarillo"{
 		unYoyo.color("amarillo")
-		assert.that(!stefan.aceptaRegalo(unYoyo))
+		assert.notThat(stefan.aceptaRegalo(unYoyo))
 	}
 	test "stefan no elige un yoyo rojo"{
 		unYoyo.color("rojo")
-		assert.that(!stefan.aceptaRegalo(unYoyo))
+		assert.notThat(stefan.aceptaRegalo(unYoyo))
 	}
 	test "stefan elige un yoyo verde"{
 		unYoyo.color("verde")
@@ -71,11 +71,11 @@ describe "group of tests" {
 		assert.that(justina.aceptaRegalo(unaPista))
 	}
 	test "justina edad impar no elige scalextric sin autos extra"{
-		assert.that(!justina.aceptaRegalo(unaPista))
+		assert.notThat(justina.aceptaRegalo(unaPista))
 	}
 	test "justina edad par no elige scalextric"{
 		justina.edad(12)
-		assert.that(!justina.aceptaRegalo(unaPista))
+		assert.notThat(justina.aceptaRegalo(unaPista))
 	}
 	test "justina edad par elige cualquier yoyo"{
 		justina.edad(12)
@@ -93,6 +93,22 @@ describe "group of tests" {
 	}
 	/* TEST PUNTO 3 */
 	test "stefan es inconformista"{
-		assert.equals(giftDealer.inconformistas(listaRegalos), [stefan])
+		assert.equals(giftDealer.inconformistas(), [stefan])
 	}
+	
+	/* TEST PUNTO 6	*/
+	test "pedro recibio más"{
+		negocio.historicoVentas().add(new HistorialVentas(personaCliente=pedro, regalo="yoyo", 
+    		precioVenta=5000))
+		negocio.historicoVentas().add(new HistorialVentas(personaCliente=pedro, regalo="balero", 
+    		precioVenta=13000))
+		negocio.historicoVentas().add(new HistorialVentas(personaCliente=stefan, regalo="yoyo", 
+    		precioVenta=15000))
+		negocio.historicoVentas().add(new HistorialVentas(personaCliente=pedro, regalo="balero", 
+    		precioVenta=2000))
+    	
+    	assert.equals(negocio.quienRecibioMasDineroEnRegalos(),pedro)
+	}
+	
+	
 }

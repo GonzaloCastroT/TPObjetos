@@ -4,6 +4,7 @@ class Scalextric{
 	var property cantAutos = 2
 	var property precioAutosExtra = 5250
 	var property cantAutosExtra = 0
+	
 	method esValioso() = self.precio()>27500
 	method precio() = precioInicial + cantAutosExtra*precioAutosExtra
 	
@@ -13,6 +14,7 @@ class Yoyo{
 	var property color = "azul"
 	var property precioInicial = 5000
 	var property adicionalColor = 1500
+	
 	method esValioso() = color=="azul" || color=="amarillo"
 	method precio(){
 		if(color=="azul" || color=="rojo")
@@ -25,6 +27,7 @@ class Balero{
 	var property tieneAdorno = false
 	var property precioInicial = 14100
 	var property adicionalAdorno = 1900
+	
 	method esValioso() = tieneAdorno
 	method precio(){
 		if(tieneAdorno)
@@ -59,20 +62,29 @@ object pedro{
 
 /* PUNTO 3 */
 object giftDealer{
-	const conocidos = [stefan, justina, pedro]
-	method inconformistas(listaRegalos){
-		return conocidos.filter({unConocido => listaRegalos.all({unRegalo => !unConocido.aceptaRegalo(unRegalo)})})
-	}
-	method inconformistas(listaPersonas, listaRegalos){
-		return listaPersonas.filter({unConocido => listaRegalos.all({unRegalo => !unConocido.aceptaRegalo(unRegalo)})})
-	}
-	
+    const property conocidos = [stefan, justina, pedro]
+    const listaRegalos = [new Scalextric(), new Yoyo(), new Balero()]
+    method inconformistas(){
+        return conocidos.filter({unConocido => self.noAceptaRegalos(unConocido)})
+    }
+    method noEsInconformista(){
+    	return conocidos.filter({unConocido => !self.noAceptaRegalos(unConocido)})
+    }
+    method noAceptaRegalos(unaPersona){
+        return listaRegalos.filter({unRegalo => unaPersona.aceptaRegalo(unRegalo)}).isEmpty()
+    }
+    method regalosQueAcepta(unaPersona){
+        return listaRegalos.filter({unRegalo => unaPersona.aceptaRegalo(unRegalo)})
+    }
+    method regaloAceptadoMasBarato(unaPersona){
+		return self.regalosQueAcepta(unaPersona).min({unRegalo=>unRegalo.precio()})
+    }
 }
 
 /* PUNTO 4 */
 object nazarena{
 	const numero = [1,2,3,4,5,6,7]
-	method aceptaRegalo(){
+	method aceptaRegalo(_){
 		return numero.anyOne() > 4
 	}
 }
@@ -108,16 +120,33 @@ class Ropa{
 }
 
 /* PUNTO 5 */
-// a simple vista, la forma de implementar el proceso es con un objeto (como todo xd)
-// la idea de este objeto es que se ocupe de manejar todo el proceso y sus metodos
-object negocio{
-	method correrProceso(listaPersonas){
-		giftDealer.inconformistas(listaPersonas, [1]).forEach({unInconformista => unInconformista.aceptaRegalo( new Voucher() )}) //¿?¿?¿?
-		
-		//giftDealer.inconformistas([1]).forEach({unInconformista => unInconformista.aceptaRegalo(new Voucher(fechaVencimiento = new Date()))})
-		
-	}
-}
+
+object negocio{	
+  	const property historicoVentas = []
+    method regalar(){
+        if(!giftDealer.inconformistas().isEmpty())
+        {	giftDealer.inconformistas().forEach({unaPersona => 
+        	self.registrarVenta(unaPersona,new Voucher())})
+        }else{
+        	giftDealer.noEsInconformista().forEach({unaPersona => 
+        	self.registrarVenta(unaPersona,giftDealer.regaloAceptadoMasBarato(unaPersona))})
+    	}
+    }
+    
+    method registrarVenta(unaPersona,unRegalo){
+    	historicoVentas.add(new HistorialVentas(personaCliente=unaPersona, regalo=unRegalo, 
+    		precioVenta=unRegalo.precio() ))
+    }
+    
+    method quienRecibioMasDineroEnRegalos(){
+    	
+    	return giftDealer.conocidos().max({unConocido => historicoVentas.
+    		filter({unaVenta => unaVenta.personaCliente() == unConocido}).
+    		sum({laVenta=>laVenta.precioVenta()})
+    	})
+    }
+    
+} 
 
 class Voucher{
 	var property monto = 5000
@@ -131,3 +160,12 @@ class HistorialVentas{
 	var property precioVenta
 	var property fechaOperacion = new Date()
 }
+
+/* PUNTO 6 */
+
+// ver punto 5 metodo quienRecibioMasDineroEnRegalos
+
+
+
+
+
